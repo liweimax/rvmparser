@@ -35,7 +35,7 @@ namespace {
       rj::Value jAttributes(rj::kObjectType);
 
       for (auto * att = group->attributes.first; att; att = att->next) {
-        jAttributes.AddMember(rj::GenericStringRef(att->key), rj::Value(att->val, alloc), alloc);
+        jAttributes.AddMember(rj::GenericStringRef<char>(att->key), rj::Value(att->val, alloc), alloc);
       }
       jGroup.AddMember("attributes", jAttributes, alloc);
     }

@@ -74,6 +74,7 @@ struct Geometry
 
   Connection* connections[6] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
   const char* colorName = nullptr;
+  int colorIndex = 0;
   void * clientData = nullptr;
   uint32_t color = 0x202020u;
 
@@ -217,6 +218,7 @@ struct Group
       int32_t id = 0;
       float translation[3];
       uint32_t clientTag;     // For use by passes to stuff temporary info
+	  float translucency = 0.0;
     } group;
   };
 
@@ -282,6 +284,9 @@ public:
   struct Connectivity* conn = nullptr;
 
   StringInterning strings;
+
+  // self-defined color table
+  Map colorTable;
 
   void updateCounts();
 

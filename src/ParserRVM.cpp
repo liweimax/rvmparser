@@ -287,6 +287,22 @@ namespace {
 
     p = read_uint32_be(g->group.material, p, e);
 
+	uint32_t translucency_code = 0;
+	float translucency = 0.0;
+	if (p[0] != 0)
+	{
+		p = read_uint32_be(translucency_code, p, e);
+		translucency_code = translucency_code >> 16;
+		for (int i = 16; i > 0; --i)
+		{
+			if (translucency_code & 1)
+				translucency += pow(2, -i);
+			translucency_code = translucency_code >> 1;
+		}
+
+		g->group.translucency = translucency;
+	}
+
     // process children
     char chunk_id[5] = { 0, 0, 0, 0, 0 };
     auto l = p;
@@ -324,7 +340,29 @@ namespace {
     return p;
   }
 
+  const char* parse_colr(Context* ctx, const char* p, const char* e)
+  {
+
+	  //uint32_t dunno1, dunno2;
+	  //p = read_uint32_be(dunno1, p, e);
+	  //p = read_uint32_be(dunno2, p, e);
+
+	  uint32_t version, index, color;
+	  p = read_uint32_be(version, p, e);
+	  p = read_uint32_be(index, p, e);
+	  p = read_uint32_be(color, p, e);
+
+	  uint64_t colorValue = color >> 8;
+
+	  ctx->store->colorTable.insert(index, colorValue);
+
+	  //ctx->v->EndGroup();
+	  return p;
+  }
+
 }
+
+
 
 bool parseRVM(class Store* store, const void * ptr, size_t size)
 {
@@ -373,6 +411,10 @@ bool parseRVM(class Store* store, const void * ptr, size_t size)
       p = parse_prim(&ctx, p, e);
       if (p == nullptr) return false;
       break;
+	case id("COLR"):
+		p = parse_colr(&ctx, p, e);
+		if (p == nullptr) return false;
+		break;
     default:
       snprintf(ctx.buf, ctx.buf_size, "Unrecognized chunk %s", chunk_id);
       store->setErrorString(buf);

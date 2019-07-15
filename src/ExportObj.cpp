@@ -205,9 +205,9 @@ void ExportObj::geometry(struct Geometry* geometry)
 {
   const auto & M = geometry->M_3x4;
 
-  if (geometry->colorName == nullptr) {
-    geometry->colorName = store->strings.intern("default");
-  }
+  //if (geometry->colorName == nullptr) {
+  //  geometry->colorName = store->strings.intern("default");
+  //}
 
   //if (geometry->kind == Geometry::Kind::Box) {
   //  geometry->colorName = store->strings.intern("blah-red");
@@ -226,20 +226,20 @@ void ExportObj::geometry(struct Geometry* geometry)
   //  geometry->color = 0x888800;
   //}
 
-  if (!definedColors.get(uint64_t(geometry->colorName))) {
-    definedColors.insert(uint64_t(geometry->colorName), 1);
+  if (!definedColors.get(uint64_t(geometry->colorIndex))) {
+    definedColors.insert(uint64_t(geometry->colorIndex), 1);
 
     auto r = (1.f / 255.f)*((geometry->color >> 16) & 0xFF);
     auto g = (1.f / 255.f)*((geometry->color >> 8) & 0xFF);
     auto b = (1.f / 255.f)*((geometry->color) & 0xFF);
 
-    fprintf(mtl, "newmtl %s\n", geometry->colorName);
+    fprintf(mtl, "newmtl %d\n", geometry->colorIndex);
     fprintf(mtl, "Ka %f %f %f\n", (2.f / 3.f)*r, (2.f / 3.f)*g, (2.f / 3.f)*b);
     fprintf(mtl, "Kd %f %f %f\n", r,g, b);
     fprintf(mtl, "Ks 0.5 0.5 0.5\n");
   }
 
-  fprintf(out, "usemtl %s\n", geometry->colorName);
+  fprintf(out, "usemtl %d\n", geometry->colorIndex);
 
   auto scale = 1.f;
   
