@@ -168,7 +168,7 @@ namespace {
 
   bool matchEnd(const char* p, const char* end)
   {
-    return (p + 2 < end) && p[0] == 'E' && p[1] == 'N' && p[2] == 'D';
+    return (p + 2 < end) && p[0] == 'E' && p[1] == 'N' && p[2] == 'D' && (p + 3 < end ? (p[3] == '\r' || p[3] == '\n') : true);
   }
 
 
