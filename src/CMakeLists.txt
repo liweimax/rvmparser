@@ -33,8 +33,8 @@ FILE(GLOB LIBRVM_SOURCE_FILES
     Tessellator.cpp
     Tessellator.h
     TriangulationFactory.cpp
-    ../libtess2/Source/*.h
-    ../libtess2/Source/*.c
+    ../libs/libtess2/Source/*.h
+    ../libs/libtess2/Source/*.c
     )
 
 ADD_LIBRARY(librvm STATIC
@@ -42,8 +42,8 @@ ADD_LIBRARY(librvm STATIC
     )
 
 target_include_directories(librvm PUBLIC 
-    ../rapidjson/include
-    ../libtess2/Include)
+    ../libs/rapidjson/include
+    ../libs/libtess2/Include)
 
 SET_PROPERTY(TARGET "librvm"  PROPERTY FOLDER "lib")
     
