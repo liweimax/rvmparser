@@ -39,3 +39,4 @@ msvc15/*.txt
 
 msvc15/rvmparser
 /build
+/.vs

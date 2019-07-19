@@ -7,7 +7,7 @@ class Colorizer : public StoreVisitor
 {
 public:
 
-  Colorizer(Logger logger, const char* colorAttribute = nullptr);
+  Colorizer(Logger logger, const char* colorAttribute = nullptr, Map* userColorTable = nullptr);
 
   void init(Store& store) override;
 
@@ -37,4 +37,7 @@ private:
   uint32_t stack_p = 0;
   const char* defaultName = nullptr;
   const char* colorAttribute = nullptr;
+  Map* userColorTable = nullptr;
+  Map userColorNameByMaterialId;
+  Store* store;
 };

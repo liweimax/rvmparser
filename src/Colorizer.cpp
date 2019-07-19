@@ -1,11 +1,13 @@
 #include <cassert>
+#include <string>
 #include "Store.h"
 #include "Colorizer.h"
 
 
-Colorizer::Colorizer(Logger logger, const char* colorAttribute) :
+Colorizer::Colorizer(Logger logger, const char* colorAttribute, Map* userColorTable) :
   logger(logger),
-  colorAttribute(colorAttribute)
+  colorAttribute(colorAttribute),
+	userColorTable(userColorTable)
 {
 }
 
@@ -261,6 +263,8 @@ void Colorizer::init(Store& store)
     colorAttribute = store.strings.intern(colorAttribute);
   }
 
+  this->store = &store;
+
   stack = (StackItem*)arena.alloc(sizeof(StackItem) * store.groupCountAllocated());
   stack_p = 0;
 
@@ -280,11 +284,27 @@ void Colorizer::beginGroup(Group* group)
 
   if (!item.override) {
     uint64_t colorName;
+	uint64_t color;
     if (group->group.material == 0) {
       colorName = uint64_t(defaultName);
     }
+	else if (userColorTable->get(color, group->group.material))
+	{
+		// material id is defined in user color table
+		if (userColorNameByMaterialId.get(colorName, group->group.material))
+		{
+			item.colorName = (const char*)colorName;
+		}
+		else
+		{
+			std::string colorNameStr = "Color" + std::to_string(group->group.material);
+			item.colorName = store->strings.intern(colorNameStr.c_str());
+			userColorNameByMaterialId.insert(group->group.material, uint64_t(item.colorName));
+		}
+		item.color = color;
+	}
     else if (colorNameByMaterialId.get(colorName, group->group.material)) {
-      uint64_t color;
+      //uint64_t color;
       if (colorByName.get(color, colorName)) {
         item.colorName = (const char*)colorName;
         item.color = uint32_t(color);

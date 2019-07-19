@@ -221,10 +221,10 @@ int main(int argc, char** argv)
     }
   }
 
-  //if (rv == 0) {
-  //  Colorizer colorizer(logger, color_attribute.empty() ? nullptr : color_attribute.c_str());
-  //  store->apply(&colorizer);
-  //}
+  if (rv == 0) {
+    Colorizer colorizer(logger, color_attribute.empty() ? nullptr : color_attribute.c_str(), &store->colorTable);
+    store->apply(&colorizer);
+  }
 
   if (rv == 0 && !discard_groups.empty()) {
     if (processFile(discard_groups, [store](const void * ptr, size_t size) { return discardGroups(store, logger, ptr, size); })) {
