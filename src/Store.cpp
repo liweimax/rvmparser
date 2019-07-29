@@ -52,6 +52,30 @@ Group* Store::findRootGroup(const char* name)
   return nullptr;
 }
 
+Group * Store::findGroup(const char * name, int level)
+{
+	for (auto * file = roots.first; file != nullptr; file = file->next) {
+		assert(file->kind == Group::Kind::File);
+		for (auto * model = file->groups.first; model != nullptr; model = model->next) {
+			//fprintf(stderr, "model '%s'\n", model->model.name);
+			assert(model->kind == Group::Kind::Model);
+			for (auto * group = model->groups.first; group != nullptr; group = group->next) {
+				//fprintf(stderr, "group '%s' %p\n", group->group.name, (void*)group->group.name);
+				if (level == 0)
+				{
+					if (group->group.name == name) return group;
+				}
+				else
+				{
+					auto res = findGroupEntity(group, name, level);
+					if (res) return res;
+				}
+			}
+		}
+	}
+	return nullptr;
+}
+
 
 void Store::addDebugLine(float* a, float* b, uint32_t color)
 {
@@ -280,6 +304,26 @@ void Store::apply(StoreVisitor* visitor, Group* group)
   }
 
   visitor->EndGroup();
+}
+
+Group * Store::findGroupEntity(Group* group, const char * name, int level)
+{
+	if (level < 0)
+	{
+		return nullptr;
+	}
+	if (group->group.name == name && level == 0)
+	{
+		return group;
+	}
+	else
+	{
+		for (auto * g = group->groups.first; g != nullptr; g = g->next) {
+			auto res = findGroupEntity(g, name, level - 1);
+			if (res) return res;
+		}
+	}
+	return nullptr;
 }
 
 void Store::apply(StoreVisitor* visitor)

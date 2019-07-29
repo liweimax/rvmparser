@@ -253,6 +253,8 @@ public:
 
   Group* findRootGroup(const char* name);
 
+  Group* findGroup(const char* name, int level);
+
   Attribute* getAttribute(Group* group, const char* key);
 
   Attribute* newAttribute(Group* group, const char* key);
@@ -306,6 +308,8 @@ private:
   void updateCountsRecurse(Group* group);
 
   void apply(StoreVisitor* visitor, Group* group);
+
+  Group* findGroupEntity(Group* group, const char* name, int level);
 
   ListHeader<Group> roots;
   ListHeader<DebugLine> debugLines;
