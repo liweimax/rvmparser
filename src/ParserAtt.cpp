@@ -75,7 +75,7 @@ namespace {
 			  group = ctx->store->findGroup(id, ctx->stack_p);
 			  if (group == nullptr)
 			  {
-				  ctx->logger(1, "The attribute of group %s dosen't exist", id);
+				  //ctx->logger(1, "The attribute of group %s dosen't exist", id);
 			  }
 		  }
 

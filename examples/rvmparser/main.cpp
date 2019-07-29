@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   int rv = 0;
   bool should_tessellate = false;
 
-  float tolerance = 0.1f;
+  float tolerance = 0.01f;
   float cullScale = -10000.1f;
 
   unsigned chunkTinyVertexThreshold = 0;
