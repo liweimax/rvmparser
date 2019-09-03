@@ -1,17 +1,20 @@
 #include <cassert>
+#include <string>
 #include "Store.h"
 #include "Colorizer.h"
 
 
-Colorizer::Colorizer(Logger logger, const char* colorAttribute) :
+Colorizer::Colorizer(Logger logger, const char* colorAttribute, Map* userColorTable) :
   logger(logger),
-  colorAttribute(colorAttribute)
+  colorAttribute(colorAttribute),
+	userColorTable(userColorTable)
 {
 }
 
 void Colorizer::init(Store& store)
 {
-  colorNameByMaterialId.insert(1, uint64_t(store.strings.intern("Black")));
+  //colorNameByMaterialId.insert(1, uint64_t(store.strings.intern("Black")));
+	colorNameByMaterialId.insert(1, uint64_t(store.strings.intern("Grey")));
   colorNameByMaterialId.insert(2, uint64_t(store.strings.intern("Red")));
   colorNameByMaterialId.insert(3, uint64_t(store.strings.intern("Orange")));
   colorNameByMaterialId.insert(4, uint64_t(store.strings.intern("Yellow")));
@@ -26,7 +29,8 @@ void Colorizer::init(Store& store)
   colorNameByMaterialId.insert(13, uint64_t(store.strings.intern("Grey")));
   colorNameByMaterialId.insert(14, uint64_t(store.strings.intern("Plum")));
   colorNameByMaterialId.insert(15, uint64_t(store.strings.intern("WhiteSmoke")));
-  colorNameByMaterialId.insert(16, uint64_t(store.strings.intern("Maroon")));
+  //colorNameByMaterialId.insert(16, uint64_t(store.strings.intern("Maroon")));
+  colorNameByMaterialId.insert(16, uint64_t(store.strings.intern("Fuchsia")));
   colorNameByMaterialId.insert(17, uint64_t(store.strings.intern("SpringGreen")));
   colorNameByMaterialId.insert(18, uint64_t(store.strings.intern("Wheat")));
   colorNameByMaterialId.insert(19, uint64_t(store.strings.intern("Gold")));
@@ -59,7 +63,8 @@ void Colorizer::init(Store& store)
   colorNameByMaterialId.insert(46, uint64_t(store.strings.intern("Plum")));
   colorNameByMaterialId.insert(47, uint64_t(store.strings.intern("WhiteSmoke")));
   colorNameByMaterialId.insert(48, uint64_t(store.strings.intern("Maroon")));
-  colorNameByMaterialId.insert(49, uint64_t(store.strings.intern("SpringGreen")));
+  //colorNameByMaterialId.insert(49, uint64_t(store.strings.intern("SpringGreen")));
+  colorNameByMaterialId.insert(49, uint64_t(store.strings.intern("BrandyRose")));
   colorNameByMaterialId.insert(50, uint64_t(store.strings.intern("Wheat")));
   colorNameByMaterialId.insert(51, uint64_t(store.strings.intern("Gold")));
   colorNameByMaterialId.insert(52, uint64_t(store.strings.intern("RoyalBlue")));
@@ -70,11 +75,15 @@ void Colorizer::init(Store& store)
   colorNameByMaterialId.insert(57, uint64_t(store.strings.intern("Ivory")));
   colorNameByMaterialId.insert(58, uint64_t(store.strings.intern("Chocolate")));
   colorNameByMaterialId.insert(59, uint64_t(store.strings.intern("SteelBlue")));
-  colorNameByMaterialId.insert(60, uint64_t(store.strings.intern("White")));
+  //colorNameByMaterialId.insert(60, uint64_t(store.strings.intern("White")));
+  colorNameByMaterialId.insert(60, uint64_t(store.strings.intern("Ecru")));
   colorNameByMaterialId.insert(61, uint64_t(store.strings.intern("Midnight")));
   colorNameByMaterialId.insert(62, uint64_t(store.strings.intern("NavyBlue")));
   colorNameByMaterialId.insert(63, uint64_t(store.strings.intern("Pink")));
   colorNameByMaterialId.insert(64, uint64_t(store.strings.intern("CoralRed")));
+  colorNameByMaterialId.insert(72, uint64_t(store.strings.intern("Kokoda")));
+  colorNameByMaterialId.insert(158, uint64_t(store.strings.intern("ColumbiaBlue")));
+  colorNameByMaterialId.insert(160, uint64_t(store.strings.intern("Citrus")));
   colorNameByMaterialId.insert(206, uint64_t(store.strings.intern("Black")));
   colorNameByMaterialId.insert(207, uint64_t(store.strings.intern("White")));
   colorNameByMaterialId.insert(208, uint64_t(store.strings.intern("WhiteSmoke")));
@@ -125,6 +134,7 @@ void Colorizer::init(Store& store)
   colorNameByMaterialId.insert(253, uint64_t(store.strings.intern("Khaki")));
   colorNameByMaterialId.insert(254, uint64_t(store.strings.intern("Chocolate")));
   colorNameByMaterialId.insert(255, uint64_t(store.strings.intern("DarkBrown")));
+  colorNameByMaterialId.insert(326, uint64_t(store.strings.intern("Amber")));
 
   colorByName.insert(uint64_t(store.strings.intern("Blue")), 0x0000cc);
   colorByName.insert(uint64_t(store.strings.intern("blue")), 0x0000cc);
@@ -229,12 +239,31 @@ void Colorizer::init(Store& store)
   colorByName.insert(uint64_t(store.strings.intern("Violet")), 0xed82ed);
   colorByName.insert(uint64_t(store.strings.intern("violet")), 0xed82ed);
 
+  // self-defined color
+  colorByName.insert(uint64_t(store.strings.intern("Fuchsia")), 0xff00ff);
+  colorByName.insert(uint64_t(store.strings.intern("fuchsia")), 0xff00ff);
+  colorByName.insert(uint64_t(store.strings.intern("BrandyRose")), 0xbc8d7d);
+  colorByName.insert(uint64_t(store.strings.intern("brandyrose")), 0x8c8d7d);
+  colorByName.insert(uint64_t(store.strings.intern("Ecru")), 0xbcac7d);
+  colorByName.insert(uint64_t(store.strings.intern("ecru")), 0xbcac7d);
+  colorByName.insert(uint64_t(store.strings.intern("Kokoda")), 0xbcac7d);
+  colorByName.insert(uint64_t(store.strings.intern("kokoda")), 0x818155);
+  colorByName.insert(uint64_t(store.strings.intern("ecru")), 0xbcac7d);
+  colorByName.insert(uint64_t(store.strings.intern("ColumbiaBlue")), 0xaaeaff);
+  colorByName.insert(uint64_t(store.strings.intern("columbiablue")), 0xaaeaff);
+  colorByName.insert(uint64_t(store.strings.intern("Citrus")), 0x8dbc00);
+  colorByName.insert(uint64_t(store.strings.intern("citrus")), 0x8dbc00);
+  colorByName.insert(uint64_t(store.strings.intern("Amber")), 0xffbe00);
+  colorByName.insert(uint64_t(store.strings.intern("amber")), 0xffbe00);
+
   defaultName = store.strings.intern("Default");
   colorByName.insert(uint64_t(defaultName), 0x787878);
 
   if (colorAttribute) {
     colorAttribute = store.strings.intern(colorAttribute);
   }
+
+  this->store = &store;
 
   stack = (StackItem*)arena.alloc(sizeof(StackItem) * store.groupCountAllocated());
   stack_p = 0;
@@ -255,11 +284,27 @@ void Colorizer::beginGroup(Group* group)
 
   if (!item.override) {
     uint64_t colorName;
+	uint64_t color;
     if (group->group.material == 0) {
       colorName = uint64_t(defaultName);
     }
+	else if (userColorTable->get(color, group->group.material))
+	{
+		// material id is defined in user color table
+		if (userColorNameByMaterialId.get(colorName, group->group.material))
+		{
+			item.colorName = (const char*)colorName;
+		}
+		else
+		{
+			std::string colorNameStr = "Color" + std::to_string(group->group.material);
+			item.colorName = store->strings.intern(colorNameStr.c_str());
+			userColorNameByMaterialId.insert(group->group.material, uint64_t(item.colorName));
+		}
+		item.color = color;
+	}
     else if (colorNameByMaterialId.get(colorName, group->group.material)) {
-      uint64_t color;
+      //uint64_t color;
       if (colorByName.get(color, colorName)) {
         item.colorName = (const char*)colorName;
         item.color = uint32_t(color);

@@ -205,9 +205,9 @@ void ExportObj::geometry(struct Geometry* geometry)
 {
   const auto & M = geometry->M_3x4;
 
-  if (geometry->colorName == nullptr) {
-    geometry->colorName = store->strings.intern("default");
-  }
+  //if (geometry->colorName == nullptr) {
+  //  geometry->colorName = store->strings.intern("default");
+  //}
 
   //if (geometry->kind == Geometry::Kind::Box) {
   //  geometry->colorName = store->strings.intern("blah-red");

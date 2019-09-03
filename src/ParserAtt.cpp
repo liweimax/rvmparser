@@ -30,6 +30,7 @@ namespace {
     unsigned stack_c = 0;
 
     bool create;
+	bool search;
   };
 
   bool handleNew(Context* ctx, const char* id_a, const char* id_b)
@@ -65,11 +66,26 @@ namespace {
           }
         }
       }
-      if (ctx->create && group == nullptr) {
-        group = ctx->store->newGroup(parent, Group::Kind::Group);
-        group->group.name = id;
-        //ctx->logger(1, "@%d: Failed to find child group '%s' id=%p", ctx->line, id, id);
-      }
+
+	  if (group == nullptr)
+	  {
+		  if (ctx->search)
+		  {
+			  // find actual parent node
+			  group = ctx->store->findGroup(id, ctx->stack_p);
+			  if (group == nullptr)
+			  {
+				  //ctx->logger(1, "The attribute of group %s dosen't exist", id);
+			  }
+		  }
+
+		  if (ctx->create)
+		  {
+			  group = ctx->store->newGroup(parent, Group::Kind::Group);
+			  group->group.name = id;
+			  //ctx->logger(1, "@%d: Failed to find child group '%s' id=%p", ctx->line, id, id);
+		  }
+	  }
     }
 
     //ctx->logger(0, "@%d: new '%s'", ctx->line, id);
@@ -168,14 +184,14 @@ namespace {
 
   bool matchEnd(const char* p, const char* end)
   {
-    return (p + 2 < end) && p[0] == 'E' && p[1] == 'N' && p[2] == 'D';
+    return (p + 2 < end) && p[0] == 'E' && p[1] == 'N' && p[2] == 'D' && (p + 3 < end ? (p[3] == '\r' || p[3] == '\n') : true);
   }
 
 
 }
 
 
-bool parseAtt(class Store* store, Logger logger, const void * ptr, size_t size, bool create)
+bool parseAtt(class Store* store, Logger logger, const void * ptr, size_t size, bool create, bool search)
 {
   char buf[1024];
   Context ctx = { store, logger, store->strings.intern("Header Information"), buf, sizeof(buf) };
@@ -183,6 +199,7 @@ bool parseAtt(class Store* store, Logger logger, const void * ptr, size_t size, 
   ctx.stack_c = 1024;
   ctx.stack = (StackItem*)xmalloc(sizeof(StackItem) * ctx.stack_c);
   ctx.create = create;
+  ctx.search = search;
 
   auto * p = (const char*)(ptr);
   auto * end = p + size;

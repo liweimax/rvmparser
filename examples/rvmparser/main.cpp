@@ -105,7 +105,7 @@ int main(int argc, char** argv)
   int rv = 0;
   bool should_tessellate = false;
 
-  float tolerance = 0.1f;
+  float tolerance = 0.01f;
   float cullScale = -10000.1f;
 
   unsigned chunkTinyVertexThreshold = 0;
@@ -221,10 +221,10 @@ int main(int argc, char** argv)
     }
   }
 
-  //if (rv == 0) {
-  //  Colorizer colorizer(logger, color_attribute.empty() ? nullptr : color_attribute.c_str());
-  //  store->apply(&colorizer);
-  //}
+  if (rv == 0) {
+    Colorizer colorizer(logger, color_attribute.empty() ? nullptr : color_attribute.c_str(), &store->colorTable);
+    store->apply(&colorizer);
+  }
 
   if (rv == 0 && !discard_groups.empty()) {
     if (processFile(discard_groups, [store](const void * ptr, size_t size) { return discardGroups(store, logger, ptr, size); })) {
